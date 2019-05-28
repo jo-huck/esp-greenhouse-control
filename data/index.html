@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html charset="UTF-8">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="shortcut icon" type="image/x-icon" href="/logo.png">
+    <link rel="apple-touch-icon" sizes="128x128" href="/logo.png">
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://unpkg.com/tooltip.js/dist/umd/tooltip.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.13.5/bootstrap-table.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.13.5/bootstrap-table.min.js"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/bootswatch/4.3.1/darkly/bootstrap.min.css" rel="stylesheet" title="main">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.6.1/bootstrap-slider.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.6.1/css/bootstrap-slider.min.css" rel="stylesheet">
+    <title>Gewächshaus</title>
+    <!-- Based in ESP Webserver Tutorials by http://www.projetsdiy.fr -->
+  </head>
+  <body>
+    <div class="container-fluid">
+      <h1>Gewächshaus Steuerung</h1>
+      <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item">
+          <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Start</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="config-tab" data-toggle="tab" href="#time" role="tab" aria-controls="contact" aria-selected="false">Temperatur Steuerung</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="config-tab" data-toggle="tab" href="#config" role="tab" aria-controls="contact" aria-selected="false">Einstellungen</a>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+      <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+        <h2>Steuerung</h2>
+        <div class="row">
+          <div class="col-xs-5 col-md-2">
+            <h4 class="text-left">L&uuml;fter
+              <div class="span badge badge-danger" id="Fan_state">AUS</div>
+            </h4>
+          </div>
+          <div class="col-md-2">
+            <div class="btn-group" role="group">
+              <button class="button btn btn-success btn-lg" id="Fan_On" type="button">AN</button>
+              <button class="button btn btn-danger btn-lg" id="Fan_Off" type="button">AUS</button>
+            </div>
+          </div>
+          <div class="col-xs-6 col-md-4">
+            <input id="pwm_fan" data-slider-id='ex2Slider' type="text" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="0"/>
+          </div>
+        </div>
+        <div>
+          <h2>Informationen</h2>
+          <table class="table col-md-4">
+            <thead>
+              <tr>
+                <th scope="col"></th>
+                <th scope="col">Wert</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Temperatur</th>
+                <td id="temp">lädt...</td>
+              </tr>
+              <tr>
+                <th scope="row">Luftfeuchtigkeit</th>
+                <td id="humi">lädt...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="tab-pane fade" id="time" role="tabpanel" aria-labelledby="config-tab">
+        <h2>Zeitsteuerung</h2>
+        
+    </div>
+      
+      <div class="tab-pane fade" id="config" role="tabpanel" aria-labelledby="config-tab">
+        <h2>Einstellungen</h2>
+        <div class="btn-group">
+          <button class="btn btn-default" id="labelTheme">Theme</button>
+          <button class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+          <ul class="dropdown-menu">
+            <li><a class="change-style-menu-item" href="#" rel="bootstrap">Boostrap</a></li>
+            <li><a class="change-style-menu-item" href="#" rel="cerulean">Cerulean</a></li>
+            <li><a class="change-style-menu-item" href="#" rel="cosmo">Cosmo</a></li>
+            <li><a class="change-style-menu-item" href="#" rel="cyborg">Cyborg</a></li>
+            <li><a class="change-style-menu-item" href="#" rel="darkly">Darkly</a></li>
+            <li><a class="change-style-menu-item" href="#" rel="flatly">Flatly</a></li>
+            <li><a class="change-style-menu-item" href="#" rel="journal">Journal</a></li>
+            <li><a class="change-style-menu-item" href="#" rel="lumen">Lumen</a></li>
+            <li><a class="change-style-menu-item" href="#" rel="sandstone">Sandstone</a></li>
+            <li><a class="change-style-menu-item" href="#" rel="simplex">Simplex</a></li>
+            <li><a class="change-style-menu-item" href="#" rel="slate">Slate</a></li>
+            <li><a class="change-style-menu-item" href="#" rel="spacelab">Spacelab</a></li>
+            <li><a class="change-style-menu-item" href="#" rel="superhero">Superhero</a></li>
+            <li><a class="change-style-menu-item" href="#" rel="united">United</a></li>
+            <li><a class="change-style-menu-item" href="#" rel="yeti">Yeti</a></li>
+          </ul>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group col-xs-6">
+            <label for="setFrequency">PWM Frequenz (hz)</label>
+            <input type="number" class="form-control" id="setFrequency" aria-describedby="freqHelp" placeholder="PWM Frequenz (0~5000)">
+            <small id="freqHelp" class="form-text text-muted">Verändert den Ton den der Lüfter beim dimmen von sich gibt.</small>
+          </div>
+          <button class="btn btn-primary" id="save">Speichern</button>
+        </div>
+      </div>
+      </div>
+      <div class="row" style="position:absolute; bottom:0; width:100%">
+        <div class="col-xs-2 col-md-2"><img src="logo.png" width="30" height="30"></div>
+        <div class="col-xs-5 col-md-5">
+          <p>Gewächshaus Beta</p>
+        </div>
+        <div class="col-xs-5 col-md-5">
+          <p><a href="http://tjio.tk">tjio.tk</a></p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      $('#pwm_fan').slider({
+        formatter: function(value) {
+          return 'Current value: ' + value;
+        }
+      });
+      $('#save').click(function(){ callApi("freq", $("setFrequency").value);console.log("set Frequency");})
+      $('#Fan_On').click(function(){ callApi("fan",'1023'); });
+      $('#Fan_Off').click(function(){ callApi("fan",'0'); });
+      $('#Update').click(function(){ getStates(); });
+      $('#pwm_fan').change(function(){(callApi("fan",Math.round(($('#pwm_fan').slider('getValue')/100)*1023)))});
+      
+      setInterval(function(){ getStates(); }, 500);
+
+      function getStates(){
+        $.getJSON('/state.json', function(data){
+          console.debug("recived data for fan: " + data.fan);
+          if(data.fan > 0) {
+            $('#Fan_state').html("AN");
+            $("#Fan_state").addClass("badge-success").removeClass("badge-danger");
+          }else{
+            $('#Fan_state').html("AUS");
+            $("#Fan_state").addClass("badge-danger").removeClass("badge-success");
+          }
+          $('#pwm_fan').slider('setValue', (data.fan/1023)*100);
+          $("temp").html = data.temp;
+          $("humi").html = data.humi;
+          return true;
+        }).fail(function(err){
+          console.log("json error "+JSON.stringify(err));
+          return true;
+        });
+      };
+      function callApi(option,state){
+        $.post("api?" + option + "=" + state).done(function(data){
+          if ( data.success !== "1" ) {
+            console.log("IO SET ERR");
+          }      
+        }).fail(function(err){
+          console.log("err IO " + JSON.stringify(err));
+        });
+      } 
+      
+      
+      // Change current theme
+      // Adapted from https://wdtz.org/bootswatch-theme-selector.html
+      var supports_storage = supports_html5_storage();
+      if (supports_storage) {
+        var theme = localStorage.theme;
+        if ( typeof theme != 'undefined' ) {
+          console.log("Reloading theme " + theme);
+          set_theme(get_themeUrl(theme));
+        }
+      }
+      
+      // New theme selected
+      jQuery(function($){
+        $('body').on('click', '.change-style-menu-item', function() {
+          var theme_name = $(this).attr('rel');
+          console.log("Changing theme to " + theme_name);
+          var theme_url = get_themeUrl(theme_name);
+          console.log("URL theme : " + theme_url);
+          set_theme(theme_url);
+        });
+      });
+      // Get theme URL
+      function get_themeUrl(theme_name){
+        $('#labelTheme').html("Th&egrave;me : " + theme_name);
+        var url_theme = "";
+        if ( theme_name === "bootstrap" ) {
+          url_theme = "https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css";
+        } else {
+          url_theme = "https://maxcdn.bootstrapcdn.com/bootswatch/4.3.1/" + theme_name + "/bootstrap.min.css";
+        }
+        if (supports_storage) {
+          // save into the local database the selected theme
+          localStorage.theme = theme_name;
+        }
+        return url_theme;
+      }
+      // Apply theme
+      function set_theme(theme_url) {
+        $('link[title="main"]').attr('href', theme_url);
+      }
+      // check if local storage is available
+      function supports_html5_storage(){
+        try {
+          return 'localStorage' in window && window['localStorage'] !== null;
+        } catch (e) {
+          return false;
+        }
+      }
+    </script>
+  </body>
+</html>
