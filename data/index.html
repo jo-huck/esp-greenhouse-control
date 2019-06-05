@@ -14,7 +14,7 @@
     <script src="https://unpkg.com/tooltip.js/dist/umd/tooltip.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.13.5/bootstrap-table.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.13.5/bootstrap-table.min.js"></script>
-    <link href="https://maxcdn.bootstrapcdn.com/bootswatch/4.3.1/darkly/bootstrap.min.css" rel="stylesheet" title="main">
+    <link href="https://bootswatch.com/4/sketchy/bootstrap.min.css" rel="stylesheet" title="main">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.6.1/bootstrap-slider.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.6.1/css/bootstrap-slider.min.css" rel="stylesheet">
     <title>Gewächshaus</title>
@@ -28,7 +28,7 @@
           <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Start</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" id="config-tab" data-toggle="tab" href="#time" role="tab" aria-controls="contact" aria-selected="false">Temperatur Steuerung</a>
+          <a class="nav-link" id="auto-tab" data-toggle="tab" href="#auto" role="tab" aria-controls="contact" aria-selected="false">Automatik</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" id="config-tab" data-toggle="tab" href="#config" role="tab" aria-controls="contact" aria-selected="false">Einstellungen</a>
@@ -48,6 +48,7 @@
               <button class="button btn btn-success btn-lg" id="Fan_On" type="button">AN</button>
               <button class="button btn btn-danger btn-lg" id="Fan_Off" type="button">AUS</button>
             </div>
+            <p class="text-warning" id="auto-warning"></p>
           </div>
           <div class="col-xs-6 col-md-4">
             <input id="pwm_fan" data-slider-id='ex2Slider' type="text" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="0"/>
@@ -76,9 +77,50 @@
         </div>
       </div>
 
-      <div class="tab-pane fade" id="time" role="tabpanel" aria-labelledby="config-tab">
-        <h2>Zeitsteuerung</h2>
-        
+      <div class="tab-pane fade" id="auto" role="tabpanel" aria-labelledby="auto-tab">
+        <h2>Automatik</h2>
+        <div class="col-md-5">
+          <h3>Temperatur</h3>
+          <div class="form-check">
+              <input class="form-check-input" type="checkbox" value="" id="tempCheck">
+              <label class="form-check-label" for="tempCheck">
+                Temperatur steuerung aktivieren
+              </label>
+            </div>
+          <div class="input-group mb-3">
+            <input type="number" class="form-control" disabled placeholder="Temperatur aus" id="tempOffInput" aria-label="Recipient's username" aria-describedby="basic-addon2">
+            <div class="input-group-append">
+              <span class="input-group-text" id="basic-addon2">°C</span>
+            </div>
+          </div>
+          <div class="input-group mb-3">
+              <input type="number" class="form-control" disabled placeholder="Temperatur an" id="tempOnInput" aria-label="Recipient's username" aria-describedby="basic-addon2">
+              <div class="input-group-append">
+                <span class="input-group-text" id="basic-addon2">°C</span>
+              </div>
+          </div>
+        </div>
+        <div class="col-md-5">
+            <h3>Luftfeuchtigkeit</h3>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="humiCheck">
+                <label class="form-check-label" for="humiCheck">
+                    Luftfeuchtigkeits steuerung aktivieren
+                </label>
+              </div>
+            <div class="input-group mb-3">
+              <input type="number" class="form-control" disabled placeholder="Luftfeuchtigkeit aus" id="humiOffInput" aria-label="Recipient's username" aria-describedby="basic-addon2">
+              <div class="input-group-append">
+                <span class="input-group-text" id="basic-addon2">%</span>
+              </div>
+            </div>
+            <div class="input-group mb-3">
+                <input type="number" class="form-control" disabled placeholder="Luftfeuchtigkeit an" id="humiOnInput" aria-label="Recipient's username" aria-describedby="basic-addon2">
+                <div class="input-group-append">
+                  <span class="input-group-text" id="basic-addon2">%</span>
+                </div>
+            </div>
+          </div>
     </div>
       
       <div class="tab-pane fade" id="config" role="tabpanel" aria-labelledby="config-tab">
@@ -88,6 +130,11 @@
           <button class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
           <ul class="dropdown-menu">
             <li><a class="change-style-menu-item" href="#" rel="bootstrap">Boostrap</a></li>
+            <li><a class="change-style-menu-item" href="#" rel="material">Material Design</a></li>
+            <li><a class="change-style-menu-item" href="#" rel="sketchy">Sketchy</a></li>
+            <li><a class="change-style-menu-item" href="#" rel="admin">Admin 2</a></li>
+            <li><a class="change-style-menu-item" href="#" rel="litera">Litera</a></li>
+            <li><a class="change-style-menu-item" href="#" rel="materia">Materia</a></li>
             <li><a class="change-style-menu-item" href="#" rel="cerulean">Cerulean</a></li>
             <li><a class="change-style-menu-item" href="#" rel="cosmo">Cosmo</a></li>
             <li><a class="change-style-menu-item" href="#" rel="cyborg">Cyborg</a></li>
@@ -106,8 +153,8 @@
         </div>
         <div class="col-md-4">
           <div class="form-group col-xs-6">
-            <label for="setFrequency">PWM Frequenz (hz)</label>
-            <input type="number" class="form-control" id="setFrequency" aria-describedby="freqHelp" placeholder="PWM Frequenz (0~5000)">
+            <label for="setFrequency">PWM Frequenz (hz)</label>°C
+            <input type="number" class="form-control" id="setFrequency" ar°Cia-describedby="freqHelp" placeholder="PWM Frequenz (0~5000)">
             <small id="freqHelp" class="form-text text-muted">Verändert den Ton den der Lüfter beim dimmen von sich gibt.</small>
           </div>
           <button class="btn btn-primary" id="save">Speichern</button>
@@ -126,20 +173,56 @@
     </div>
 
     <script>
+      var tempCheck = document.getElementById("tempCheck");
+      var tempOnInput = document.getElementById("tempOnInput");
+      var tempOffInput = document.getElementById("tempOffInput");
+      var auto_warning = document.getElementById("auto-warning");
+      var setFrequency =document.getElementById("setFrequency");
+      var tempEnabled;
+
       $('#pwm_fan').slider({
         formatter: function(value) {
           return 'Current value: ' + value;
         }
       });
-      $('#save').click(function(){ callApi("freq", $("setFrequency").value);console.log("set Frequency");})
-      $('#Fan_On').click(function(){ callApi("fan",'1023'); });
-      $('#Fan_Off').click(function(){ callApi("fan",'0'); });
+
+      $('#save').click(function(){ callApi("freq", setFrequency.value);console.log("set Frequency:" + setFrequency.value);})
+      $('#Fan_On').click(function(){ callApi("fan",'1023'); tempCheck.checked = false;});
+      $('#Fan_Off').click(function(){ callApi("fan",'0'); tempCheck.checked = false;});
       $('#Update').click(function(){ getStates(); });
       $('#pwm_fan').change(function(){(callApi("fan",Math.round(($('#pwm_fan').slider('getValue')/100)*1023)))});
       
+
+      tempCheck.onchange = function() {
+        if (tempCheck.checked == true) {
+            tempOnInput.removeAttribute("disabled");
+            tempOffInput.removeAttribute("disabled");
+        } else if (tempCheck.checked == false) {
+            tempOnInput.setAttribute("disabled", null);
+            tempOffInput.setAttribute("disabled", null);
+        }
+        sendTemp();
+        
+      }
+      tempOffInput.onchange = function() {sendTemp();}
+      tempOnInput.onchange = function() {sendTemp();}
+
+      function sendTemp() {
+        callApi("tempEnabled", Number(tempCheck.checked));
+        callApi("tempOn", tempOnInput.value);
+        callApi("tempOff", tempOffInput.value);
+        console.log("send tempEnabled=" + Number(tempCheck.checked));
+        console.log("send tempOn=" + tempOnInput.value);
+        console.log("send tempOff=" + tempOffInput.value);
+      }
       setInterval(function(){ getStates(); }, 500);
 
       function getStates(){
+        if (tempCheck.checked === true){
+          auto_warning.innerHTML = "Automatik aktiviert! Wird bei manueller Veränderung deaktiviert!"
+        }else{
+          auto_warning.innerHTML = ""
+        }
         $.getJSON('/state.json', function(data){
           console.debug("recived data for fan: " + data.fan);
           if(data.fan > 0) {
@@ -150,8 +233,8 @@
             $("#Fan_state").addClass("badge-danger").removeClass("badge-success");
           }
           $('#pwm_fan').slider('setValue', (data.fan/1023)*100);
-          $("temp").html = data.temp;
-          $("humi").html = data.humi;
+          document.getElementById("temp").innerHTML = data.temp;
+          document.getElementById("humi").innerHTML = data.humi;
           return true;
         }).fail(function(err){
           console.log("json error "+JSON.stringify(err));
@@ -196,8 +279,16 @@
         var url_theme = "";
         if ( theme_name === "bootstrap" ) {
           url_theme = "https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css";
-        } else {
-          url_theme = "https://maxcdn.bootstrapcdn.com/bootswatch/4.3.1/" + theme_name + "/bootstrap.min.css";
+        } else if (theme_name === "material"){
+          url_theme = "https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css";
+        }else if (theme_name === "admin") {
+          url_theme = "https://cdn.jsdelivr.net/npm/startbootstrap-sb-admin-2@4.0.5/css/sb-admin-2.min.css";
+        }else if (theme_name === "bootstrap"){
+          url_theme = "https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css";
+        }
+        
+        else {
+          url_theme = "https://bootswatch.com/4/" + theme_name + "/bootstrap.min.css";
         }
         if (supports_storage) {
           // save into the local database the selected theme

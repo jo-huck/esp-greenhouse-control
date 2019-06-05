@@ -17,6 +17,10 @@ int fanSpeed = 0;
 float t;
 float h;
 
+boolean tempEnabled = false;
+float tempOn = 120;
+float tempOff = 100;
+
 const char* ssid = STASSID;
 const char* password = STAPSK;
 
@@ -30,8 +34,27 @@ void setFanSpeed(int speed);
 
 void sendState() {
   delay(50);
-  String json = "{\"fan\":\"" + String(fanSpeed) + "\", \"temp\":\"" + t + "\",\"humi\":\"" + h + "\"}";
+  String json = "{\"fan\":\"" + String(fanSpeed) + "\", \"temp\":\"" + t + "\",\"humi\":\"" + h + "\",\"tempEnabled\":\"" + tempEnabled + "\",\"tempOn\":\"" + tempOn + "\",\"tempOff\":\"" + tempOff + "\"}"; //"\",\"tempEnabled\":\"" + tempEnabled + 
   server.send(200, "application/json", json);
+}
+
+void handleApi() {
+  if (server.hasArg("fan")){
+    setFanSpeed(server.arg("fan").toInt());
+  }
+  if (server.hasArg("freq")){
+    analogWriteFreq(server.arg("freq").toInt());
+  }
+  if (server.hasArg("tempEnabled")){
+    tempEnabled = server.arg("tempEnabled").toInt();
+  }
+  if (server.hasArg("tempOn")){
+    tempOn = server.arg("tempOn").toFloat();
+  }
+  if (server.hasArg("tempOff")){
+    tempOff = server.arg("tempOff").toFloat();
+  }
+  server.send(200,"application/json", "{\"success\":\"1\"}");
 }
 
 void setup() {
@@ -58,15 +81,7 @@ void setup() {
   ArduinoOTA.begin();
   SPIFFS.begin();
   server.on("/state.json", sendState);
-  server.on("/api", []() {
-    if (server.hasArg("fan")){
-      setFanSpeed(server.arg("fan").toInt());
-    }
-    if (server.hasArg("freq")){
-      analogWriteFreq(server.arg("freq").toInt());
-    }
-    server.send(200,"application/json", "{\"success\":\"1\"}");
-  });
+  server.on("/api", handleApi);
   server.serveStatic("/", SPIFFS, "/index.html");
   server.serveStatic("/logo.png", SPIFFS, "/logo.png");
   server.begin();
@@ -89,4 +104,12 @@ void loop() {
   ArduinoOTA.handle();
   t = dht.readTemperature();
   h = dht.readHumidity();
+  if (tempEnabled == true) {
+    if (t >= tempOn) {
+      setFanSpeed(1023);
+    }
+    if (t<= tempOff) {
+      setFanSpeed(0);
+    }
+  }
 }
