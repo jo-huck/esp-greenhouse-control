@@ -87,40 +87,26 @@
                 Temperatur steuerung aktivieren
               </label>
             </div>
+          
           <div class="input-group mb-3">
-            <input type="number" class="form-control" disabled placeholder="Temperatur aus" id="tempOffInput" aria-label="Recipient's username" aria-describedby="basic-addon2">
+            <div class="input-group-prepend">
+              <span class="input-group-text">AUS</span>
+            </div>
+            <input type="text" class="form-control" disabled placeholder="Temperatur aus" id="tempOffInput" aria-label="Amount (to the nearest dollar)">
             <div class="input-group-append">
-              <span class="input-group-text" id="basic-addon2">°C</span>
+              <span class="input-group-text">°C</span>
             </div>
           </div>
           <div class="input-group mb-3">
-              <input type="number" class="form-control" disabled placeholder="Temperatur an" id="tempOnInput" aria-label="Recipient's username" aria-describedby="basic-addon2">
-              <div class="input-group-append">
-                <span class="input-group-text" id="basic-addon2">°C</span>
-              </div>
+            <div class="input-group-prepend">
+              <span class="input-group-text">AN </span>
+            </div>
+            <input type="text" class="form-control" disabled placeholder="Temperatur an" id="tempOnInput" aria-label="Amount (to the nearest dollar)">
+            <div class="input-group-append">
+              <span class="input-group-text">°C</span>
+            </div>
           </div>
         </div>
-        <div class="col-md-5">
-            <h3>Luftfeuchtigkeit</h3>
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="humiCheck">
-                <label class="form-check-label" for="humiCheck">
-                    Luftfeuchtigkeits steuerung aktivieren
-                </label>
-              </div>
-            <div class="input-group mb-3">
-              <input type="number" class="form-control" disabled placeholder="Luftfeuchtigkeit aus" id="humiOffInput" aria-label="Recipient's username" aria-describedby="basic-addon2">
-              <div class="input-group-append">
-                <span class="input-group-text" id="basic-addon2">%</span>
-              </div>
-            </div>
-            <div class="input-group mb-3">
-                <input type="number" class="form-control" disabled placeholder="Luftfeuchtigkeit an" id="humiOnInput" aria-label="Recipient's username" aria-describedby="basic-addon2">
-                <div class="input-group-append">
-                  <span class="input-group-text" id="basic-addon2">%</span>
-                </div>
-            </div>
-          </div>
     </div>
       
       <div class="tab-pane fade" id="config" role="tabpanel" aria-labelledby="config-tab">
@@ -167,7 +153,7 @@
           <p>Gewächshaus Beta</p>
         </div>
         <div class="col-xs-5 col-md-5">
-          <p><a href="http://tjio.tk">tjio.tk</a></p>
+          <p><a href="http://johuck.tk">johuck.tk</a></p>
         </div>
       </div>
     </div>
@@ -179,6 +165,7 @@
       var auto_warning = document.getElementById("auto-warning");
       var setFrequency =document.getElementById("setFrequency");
       var tempEnabled;
+      var getInit = true;
 
       $('#pwm_fan').slider({
         formatter: function(value) {
@@ -187,8 +174,8 @@
       });
 
       $('#save').click(function(){ callApi("freq", setFrequency.value);console.log("set Frequency:" + setFrequency.value);})
-      $('#Fan_On').click(function(){ callApi("fan",'1023'); tempCheck.checked = false;});
-      $('#Fan_Off').click(function(){ callApi("fan",'0'); tempCheck.checked = false;});
+      $('#Fan_On').click(function(){ callApi("fan",'1023');});
+      $('#Fan_Off').click(function(){ callApi("fan",'0');});
       $('#Update').click(function(){ getStates(); });
       $('#pwm_fan').change(function(){(callApi("fan",Math.round(($('#pwm_fan').slider('getValue')/100)*1023)))});
       
@@ -219,7 +206,7 @@
 
       function getStates(){
         if (tempCheck.checked === true){
-          auto_warning.innerHTML = "Automatik aktiviert! Wird bei manueller Veränderung deaktiviert!"
+          auto_warning.innerHTML = "Automatik aktiviert!"
         }else{
           auto_warning.innerHTML = ""
         }
@@ -233,8 +220,13 @@
             $("#Fan_state").addClass("badge-danger").removeClass("badge-success");
           }
           $('#pwm_fan').slider('setValue', (data.fan/1023)*100);
-          document.getElementById("temp").innerHTML = data.temp;
-          document.getElementById("humi").innerHTML = data.humi;
+          document.getElementById("temp").innerHTML = data.temp + "°C";
+          document.getElementById("humi").innerHTML = data.humi + "%";
+          if (getInit === true){
+            tempOnInput.value = data.tempOn;
+            tempOffInput.value = data.tempOff;
+            getInit = false;
+          }
           return true;
         }).fail(function(err){
           console.log("json error "+JSON.stringify(err));

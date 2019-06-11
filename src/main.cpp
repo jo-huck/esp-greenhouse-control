@@ -25,6 +25,7 @@ const char* ssid = STASSID;
 const char* password = STAPSK;
 
 const int dht22Pin = 5;
+const int fanPin = 4;
 
 DHT dht(dht22Pin,DHT22);
 ESP8266WebServer server(80);
@@ -87,7 +88,7 @@ void setup() {
   server.begin();
 }
 void setFanSpeed(int speed) {
-  int pin = 4;
+  int pin = fanPin;
   if (speed < 99 && speed != 0){
     speed = 100;
   }
