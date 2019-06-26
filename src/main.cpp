@@ -7,6 +7,8 @@
 #include <ESP8266WebServer.h>
 #include <FS.h>
 
+#include <EEPROM.h>
+
 #ifndef STASSID
 #define STASSID "Huck!Lan"
 #define STAPSK  "HuckSpeed2018+"
@@ -17,7 +19,13 @@ int fanSpeed = 0;
 float t;
 float h;
 
-boolean tempEnabled = false;
+
+// EEPROM start index
+int eeprom_tempOn_index = 10;
+int eeprom_tempOff_index = 30;
+int eeprom_tempEnabled_index = 100;
+
+int tempEnabled;
 float tempOn = 120;
 float tempOff = 100;
 
@@ -35,7 +43,7 @@ void setFanSpeed(int speed);
 
 void sendState() {
   delay(50);
-  String json = "{\"fan\":\"" + String(fanSpeed) + "\", \"temp\":\"" + t + "\",\"humi\":\"" + h + "\",\"tempEnabled\":\"" + tempEnabled + "\",\"tempOn\":\"" + tempOn + "\",\"tempOff\":\"" + tempOff + "\"}"; //"\",\"tempEnabled\":\"" + tempEnabled + 
+  String json = "{\"fan\":\"" + String(fanSpeed) + "\", \"temp\":\"" + t + "\",\"humi\":\"" + h + "\",\"tempEnabled\":\"" + tempEnabled + "\",\"tempOn\":\"" + tempOn + "\",\"tempOff\":\"" + tempOff + "\"}"; //"\",\"tempEnabled\":\"" + tempEnabled +
   server.send(200, "application/json", json);
 }
 
@@ -48,14 +56,34 @@ void handleApi() {
   }
   if (server.hasArg("tempEnabled")){
     tempEnabled = server.arg("tempEnabled").toInt();
+    EEPROM.begin(4096);
+    EEPROM.put(eeprom_tempOn_index, tempEnabled);
+    EEPROM.commit();                      // Only needed for ESP8266 to get data written
+    EEPROM.end();
   }
   if (server.hasArg("tempOn")){
     tempOn = server.arg("tempOn").toFloat();
+    EEPROM.begin(4096);
+    EEPROM.put(eeprom_tempOn_index, tempOn);
+    EEPROM.commit();                      // Only needed for ESP8266 to get data written
+    EEPROM.end();
   }
   if (server.hasArg("tempOff")){
     tempOff = server.arg("tempOff").toFloat();
+    EEPROM.begin(4096);
+    EEPROM.put(eeprom_tempOff_index, tempOff);
+    EEPROM.commit();                      // Only needed for ESP8266 to get data written
+    EEPROM.end();
   }
   server.send(200,"application/json", "{\"success\":\"1\"}");
+}
+
+void loadEepromValues(){
+  EEPROM.begin(4096);
+  EEPROM.get( eeprom_tempOn_index, tempOn);
+  EEPROM.get( eeprom_tempOff_index, tempOff);
+  EEPROM.get( eeprom_tempEnabled_index, tempEnabled);
+  EEPROM.end();
 }
 
 void setup() {
@@ -81,6 +109,7 @@ void setup() {
   Serial.println("OTA begin");
   ArduinoOTA.begin();
   SPIFFS.begin();
+  loadEepromValues();
   server.on("/state.json", sendState);
   server.on("/api", handleApi);
   server.serveStatic("/", SPIFFS, "/index.html");
@@ -99,7 +128,7 @@ void setFanSpeed(int speed) {
   }
   analogWrite(pin,speed);
 }
- 
+
 void loop() {
   server.handleClient();
   ArduinoOTA.handle();

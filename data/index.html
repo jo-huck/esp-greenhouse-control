@@ -87,7 +87,7 @@
                 Temperatur steuerung aktivieren
               </label>
             </div>
-          
+
           <div class="input-group mb-3">
             <div class="input-group-prepend">
               <span class="input-group-text">AUS</span>
@@ -108,7 +108,7 @@
           </div>
         </div>
     </div>
-      
+
       <div class="tab-pane fade" id="config" role="tabpanel" aria-labelledby="config-tab">
         <h2>Einstellungen</h2>
         <div class="btn-group">
@@ -178,7 +178,7 @@
       $('#Fan_Off').click(function(){ callApi("fan",'0');});
       $('#Update').click(function(){ getStates(); });
       $('#pwm_fan').change(function(){(callApi("fan",Math.round(($('#pwm_fan').slider('getValue')/100)*1023)))});
-      
+
 
       tempCheck.onchange = function() {
         if (tempCheck.checked == true) {
@@ -189,7 +189,7 @@
             tempOffInput.setAttribute("disabled", null);
         }
         sendTemp();
-        
+
       }
       tempOffInput.onchange = function() {sendTemp();}
       tempOnInput.onchange = function() {sendTemp();}
@@ -222,6 +222,7 @@
           $('#pwm_fan').slider('setValue', (data.fan/1023)*100);
           document.getElementById("temp").innerHTML = data.temp + "°C";
           document.getElementById("humi").innerHTML = data.humi + "%";
+          console.debug(data.tempEnabled);
           if (getInit === true){
             tempOnInput.value = data.tempOn;
             tempOffInput.value = data.tempOff;
@@ -237,13 +238,13 @@
         $.post("api?" + option + "=" + state).done(function(data){
           if ( data.success !== "1" ) {
             console.log("IO SET ERR");
-          }      
+          }
         }).fail(function(err){
           console.log("err IO " + JSON.stringify(err));
         });
-      } 
-      
-      
+      }
+
+
       // Change current theme
       // Adapted from https://wdtz.org/bootswatch-theme-selector.html
       var supports_storage = supports_html5_storage();
@@ -254,7 +255,7 @@
           set_theme(get_themeUrl(theme));
         }
       }
-      
+
       // New theme selected
       jQuery(function($){
         $('body').on('click', '.change-style-menu-item', function() {
@@ -278,7 +279,7 @@
         }else if (theme_name === "bootstrap"){
           url_theme = "https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css";
         }
-        
+
         else {
           url_theme = "https://bootswatch.com/4/" + theme_name + "/bootstrap.min.css";
         }
