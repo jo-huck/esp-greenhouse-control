@@ -48,7 +48,7 @@
               <button class="button btn btn-success btn-lg" id="Fan_On" type="button">AN</button>
               <button class="button btn btn-danger btn-lg" id="Fan_Off" type="button">AUS</button>
             </div>
-            <p class="text-warning" id="auto-warning"></p>
+            <p class="text-warning" style="text-align: center;" id="auto-warning"></p>
           </div>
           <div class="col-xs-6 col-md-4">
             <input id="pwm_fan" data-slider-id='ex2Slider' type="text" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="0"/>
@@ -92,7 +92,7 @@
             <div class="input-group-prepend">
               <span class="input-group-text">AUS</span>
             </div>
-            <input type="text" class="form-control" disabled placeholder="Temperatur aus" id="tempOffInput" aria-label="Amount (to the nearest dollar)">
+            <input type="number" step="0.1" class="form-control" disabled placeholder="Temperatur aus" id="tempOffInput" aria-label="Amount (to the nearest dollar)">
             <div class="input-group-append">
               <span class="input-group-text">°C</span>
             </div>
@@ -101,7 +101,7 @@
             <div class="input-group-prepend">
               <span class="input-group-text">AN </span>
             </div>
-            <input type="text" class="form-control" disabled placeholder="Temperatur an" id="tempOnInput" aria-label="Amount (to the nearest dollar)">
+            <input type="number" step="0.1" class="form-control" disabled placeholder="Temperatur an" id="tempOnInput" aria-label="Amount (to the nearest dollar)">
             <div class="input-group-append">
               <span class="input-group-text">°C</span>
             </div>
@@ -112,7 +112,7 @@
       <div class="tab-pane fade" id="config" role="tabpanel" aria-labelledby="config-tab">
         <h2>Einstellungen</h2>
         <div class="btn-group">
-          <button class="btn btn-default" id="labelTheme">Theme</button>
+          <button class="btn btn-default">Aussehen</button>
           <button class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
           <ul class="dropdown-menu">
             <li><a class="change-style-menu-item" href="#" rel="bootstrap">Boostrap</a></li>
@@ -139,11 +139,10 @@
         </div>
         <div class="col-md-4">
           <div class="form-group col-xs-6">
-            <label for="setFrequency">PWM Frequenz (hz)</label>°C
-            <input type="number" class="form-control" id="setFrequency" ar°Cia-describedby="freqHelp" placeholder="PWM Frequenz (0~5000)">
-            <small id="freqHelp" class="form-text text-muted">Verändert den Ton den der Lüfter beim dimmen von sich gibt.</small>
+            <label for="setFrequency">PWM Frequenz (hz)</label>
+            <input type="number" class="form-control" id="setFrequency" aria-describedby="freqHelp" placeholder="PWM Frequenz (0~5000)">
+            <small id="freqHelp" class="form-text text-muted">Verändert den Ton den der Lüfter beim dimmen von sich gibt. (standard: 100)</small>
           </div>
-          <button class="btn btn-primary" id="save">Speichern</button>
         </div>
       </div>
       </div>
@@ -163,7 +162,7 @@
       var tempOnInput = document.getElementById("tempOnInput");
       var tempOffInput = document.getElementById("tempOffInput");
       var auto_warning = document.getElementById("auto-warning");
-      var setFrequency =document.getElementById("setFrequency");
+      var setFrequency = document.getElementById("setFrequency");
       var tempEnabled;
       var getInit = true;
 
@@ -173,24 +172,14 @@
         }
       });
 
-      $('#save').click(function(){ callApi("freq", setFrequency.value);console.log("set Frequency:" + setFrequency.value);})
+      setFrequency.onchange = function(){ callApi("freq", setFrequency.value);console.log("set Frequency:" + setFrequency.value);}
       $('#Fan_On').click(function(){ callApi("fan",'1023');});
       $('#Fan_Off').click(function(){ callApi("fan",'0');});
       $('#Update').click(function(){ getStates(); });
       $('#pwm_fan').change(function(){(callApi("fan",Math.round(($('#pwm_fan').slider('getValue')/100)*1023)))});
 
 
-      tempCheck.onchange = function() {
-        if (tempCheck.checked == true) {
-            tempOnInput.removeAttribute("disabled");
-            tempOffInput.removeAttribute("disabled");
-        } else if (tempCheck.checked == false) {
-            tempOnInput.setAttribute("disabled", null);
-            tempOffInput.setAttribute("disabled", null);
-        }
-        sendTemp();
-
-      }
+      tempCheck.onchange = function() {sendTemp();}
       tempOffInput.onchange = function() {sendTemp();}
       tempOnInput.onchange = function() {sendTemp();}
 
@@ -205,11 +194,6 @@
       setInterval(function(){ getStates(); }, 500);
 
       function getStates(){
-        if (tempCheck.checked === true){
-          auto_warning.innerHTML = "Automatik aktiviert!"
-        }else{
-          auto_warning.innerHTML = ""
-        }
         $.getJSON('/state.json', function(data){
           console.debug("recived data for fan: " + data.fan);
           if(data.fan > 0) {
@@ -226,7 +210,19 @@
           if (getInit === true){
             tempOnInput.value = data.tempOn;
             tempOffInput.value = data.tempOff;
+            setFrequency.value = data.freq;
             getInit = false;
+          }
+          if (data.tempEnabled == true) {
+            auto_warning.innerHTML = "Automatik aktiv!";
+            tempCheck.checked = true;
+            tempOnInput.removeAttribute("disabled");
+            tempOffInput.removeAttribute("disabled");
+          }else{
+            auto_warning.innerHTML = "";
+            tempCheck.checked = false;
+            tempOnInput.setAttribute("disabled", null);
+            tempOffInput.setAttribute("disabled", null);
           }
           return true;
         }).fail(function(err){

@@ -15,6 +15,7 @@
 #endif
 
 int fanSpeed = 0;
+int freq = 100;
 
 float t;
 float h;
@@ -25,7 +26,7 @@ int eeprom_tempOn_index = 10;
 int eeprom_tempOff_index = 30;
 int eeprom_tempEnabled_index = 100;
 
-int tempEnabled;
+bool tempEnabled = true;
 float tempOn = 120;
 float tempOff = 100;
 
@@ -43,7 +44,7 @@ void setFanSpeed(int speed);
 
 void sendState() {
   delay(50);
-  String json = "{\"fan\":\"" + String(fanSpeed) + "\", \"temp\":\"" + t + "\",\"humi\":\"" + h + "\",\"tempEnabled\":\"" + tempEnabled + "\",\"tempOn\":\"" + tempOn + "\",\"tempOff\":\"" + tempOff + "\"}"; //"\",\"tempEnabled\":\"" + tempEnabled +
+  String json = "{\"fan\":\"" + String(fanSpeed) + "\", \"temp\":\"" + t + "\",\"humi\":\"" + h + "\",\"tempEnabled\":\"" + tempEnabled + "\",\"tempOn\":\"" + tempOn + "\",\"tempOff\":\"" + tempOff + "\",\"freq\":\"" + freq + "\"}"; //"\",\"tempEnabled\":\"" + tempEnabled +
   server.send(200, "application/json", json);
 }
 
@@ -52,12 +53,13 @@ void handleApi() {
     setFanSpeed(server.arg("fan").toInt());
   }
   if (server.hasArg("freq")){
-    analogWriteFreq(server.arg("freq").toInt());
+    freq = server.arg("freq").toInt();
+    analogWriteFreq(freq);
   }
   if (server.hasArg("tempEnabled")){
     tempEnabled = server.arg("tempEnabled").toInt();
     EEPROM.begin(4096);
-    EEPROM.put(eeprom_tempOn_index, tempEnabled);
+    EEPROM.put(eeprom_tempEnabled_index, tempEnabled);
     EEPROM.commit();                      // Only needed for ESP8266 to get data written
     EEPROM.end();
   }
@@ -87,7 +89,7 @@ void loadEepromValues(){
 }
 
 void setup() {
-  analogWriteFreq(100);
+  analogWriteFreq(freq);
   Serial.begin(9600);
   pinMode(2, OUTPUT);
   pinMode(4, OUTPUT);
